@@ -1,0 +1,22 @@
+<% include ../nav.ejs %>
+<main class="page">
+  <section class="clean-block features">
+    <div class="container">
+      <div class="block-heading">
+        <h2 class="text-info">검색</h2>
+        <p>키워드를 입력해주세요</p>
+      </div>
+    </div>
+    <form class="search-form" method="post" action="/search">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="fa fa-search"></i></span>
+        </div>
+        <input class="form-control" type="text" name="keyword" placeholder="저작의 이름" />
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="submit">검색</button>
+        </div>
+      </div>
+    </form>
+  </section>
+</main>

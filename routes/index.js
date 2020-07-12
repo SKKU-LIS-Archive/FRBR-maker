@@ -461,4 +461,39 @@ module.exports = function (app, conn) {
       }
     })
   });
+
+  /* ---------------------------------------------------------- SEARCH */
+
+  // 검색 페이지
+  app.get('/search', function (req, res) {
+    res.render('index', {
+      page: 'search/search',
+      page_name: '페이지 이름',
+    });
+  });
+
+  // 검색 작업
+  app.post('/search', function (req, res) {
+    let keyword = req.body.keyword;
+    let search_join_sql = `
+      SELECT work.title AS title, author.name AS author_name , work.description AS description
+      FROM work
+      LEFT JOIN author ON work.author_id = author.id
+      WHERE work.title LIKE '%${keyword}%'
+      ORDER BY work.title;
+    `;
+    conn.query(search_join_sql, function (err, results) {
+      if (err) {
+        console.log(err);
+        res.send(`<script>\`${err.sqlMessage}\`</script>`)
+      } else {
+        console.log('결과', results)
+        let works = results;
+        res.render('index', {
+          page: 'inquire/work',
+          page_name: '페이지 이름',
+          works: works
+        });
+      }
+    })
 }
