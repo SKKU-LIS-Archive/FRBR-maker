@@ -328,4 +328,91 @@ module.exports = function (app, conn) {
       }
     }
   });
+
+  /* ---------------------------------------------------------- DELETE */
+
+  // 테이블 삭제 작업
+  app.get('/delete/table/:table_name', function (req, res) {
+    let table_name = req.params.table_name;
+    let table_delete_sql = `
+      DROP TABLE \`${table_name}\`;
+    `;
+    conn.query(table_delete_sql, function (err, results) {
+      if (err) {
+        console.log(err);
+        res.send(`<script>alert(\`${err.sqlMessage}\`)</script>`);
+      } else {
+        res.redirect('/manage/table_list');
+      }
+    });
+  });
+
+  // 테이블 행 삭제 작업
+  app.get('/delete/row/:table_name/:id', function (req, res) {
+    let table_name = req.params.table_name;
+    let id = req.params.id;
+    let delete_row_sql = `
+      DELETE FROM \`${table_name}\`
+      WHERE id LIKE ${id}
+    `;
+    conn.query(delete_row_sql, function (err, results) {
+      if (err) {
+        console.log(err);
+        res.send(`<script>alert(\`${err.sqlMessage}\`)</script>`);
+      } else {
+        res.redirect(`/manage/table/${table_name}`);
+      }
+    });
+  });
+
+  // 테이블 열 삭제 작업
+  app.get('/delete/column/:table_name/:column_name', function (req, res) {
+    let table_name = req.params.table_name;
+    let column_name = req.params.column_name;
+    let get_all_foreign_key_sql = `
+      select ts.CONSTRAINT_NAME from information_schema.table_constraints AS ts where TABLE_NAME = '${table_name}' AND CONSTRAINT_TYPE = 'FOREIGN KEY';
+    `
+    let remove_column_sql = `
+      ALTER TABLE \`${table_name}\` DROP \`${column_name}\`;
+    `;
+    conn.query(get_all_foreign_key_sql, function (err, results) {
+      if (err) {
+        console.log(err);
+        res.send(`<script>alert(\`${err.sqlMessage}\`)</script>`);
+      } else {
+        let has_foreign_key_constraint = results.some(x => x['CONSTRAINT_NAME'] === `${column_name}_FK`);
+        
+        if (has_foreign_key_constraint === true) {
+          let drop_foreign_key_sql = `
+            ALTER TABLE \`${table_name}\` 
+            DROP FOREIGN KEY \`${column_name}_FK\`;
+          `
+          conn.query(drop_foreign_key_sql, function (err2, results2) {
+            if (err2) {
+              console.log(err2);
+              res.send(`<script>alert(\`${err2.sqlMessage}\`)</script>`);
+            } else {
+              conn.query(remove_column_sql, function (err3, results3) {
+                if (err3) {
+                  console.log(err3);
+                  res.send(`<script>alert(\`${err3.sqlMessage}\`)</script>`);
+                } else {
+                  res.redirect(`/manage/table/${table_name}`);
+                }
+              });
+            }
+          });
+        } else {
+          conn.query(remove_column_sql, function (err3, results3) {
+            if (err3) {
+              console.log(err3);
+              res.send(`<script>alert(\`${err3.sqlMessage}\`)</script>`);
+            } else {
+              res.redirect(`/manage/table/${table_name}`);
+            }
+          });
+        }
+      }
+    });
+  });
 }
