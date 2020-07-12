@@ -1,0 +1,12 @@
+.table th, .table td {
+  vertical-align:middle;
+  box-sizing:border-box;
+}
+
+.dynamic-table {
+  width:80%;
+  position:relative;
+  left:10%;
+  right:10%;
+}
+
