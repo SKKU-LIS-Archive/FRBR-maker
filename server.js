@@ -36,3 +36,6 @@ console.log('connection success!');
 let server = app.listen(port, function () {
   console.log('Express server has started on port ' + port);
 });
+
+// [CONFIGURE ROUTER]
+let router = require('./routes')(app, conn);
