@@ -415,4 +415,50 @@ module.exports = function (app, conn) {
       }
     });
   });
+
+  /* ---------------------------------------------------------- INQUIRE */
+
+  // 조회 페이지 -------------- 여기서부터는 본인이 직접 
+  app.get('/inquire/work', function (req, res) {
+    let join_sql = `
+      SELECT work.title AS title, author.name AS author_name , work.description AS description
+      FROM work
+      LEFT JOIN author ON work.author_id = author.id
+      ORDER BY work.title;
+    `;
+    conn.query(join_sql, function (err, results) {
+      if (err) {
+        console.log(err);
+        res.send(`<script>\`${err.sqlMessage}\`</script>`)
+      } else {
+        let works = results;
+        res.render('index', {
+          page: 'inquire/work',
+          page_name: '저작',
+          works: works,
+        });
+      }
+    })
+  });
+
+  app.get('/inquire/author', function (req, res) {
+    let select_author_sql = `
+      SELECT name, age, introduction
+      FROM author
+      ORDER BY name;
+    `;
+    conn.query(select_author_sql, function (err, results) {
+      if (err) {
+        console.log(err);
+        res.send(`<script>\`${err.sqlMessage}\`</script>`)
+      } else {
+        let authors = results;
+        res.render('index', {
+          page: 'inquire/author',
+          page_name: '작가',
+          authors: authors,
+        });
+      }
+    })
+  });
 }

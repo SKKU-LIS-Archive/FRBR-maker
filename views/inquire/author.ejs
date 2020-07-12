@@ -1,0 +1,29 @@
+<% include ../nav.ejs %>
+<main class="page blog-post-list">
+  <section class="clean-block clean-blog-list">
+    <div class="container">
+      <div class="block-heading">
+        <h2 class="text-info"><%= page_name %></h2>
+      </div>
+      <div class="block-content">
+        <% for (let author of authors) { %>
+        <div class="clean-blog-post">
+          <div class="row">
+            <div class="col-lg-5">
+              <img class="rounded img-fluid" src="img/avatars/avatar1.jpg" />
+            </div>
+            <div class="col-lg-7">
+              <h3>이름 : <%= author.name %></h3>
+              <br />
+              <h5>나이 : <%= author.age %></h5>
+              <br />
+              <p>소개 : <%= author.introduction %></p>
+              <br />
+            </div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+</main>
