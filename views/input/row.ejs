@@ -1,0 +1,27 @@
+<% include ../nav.ejs %>
+<main class="page contact-us-page">
+  <section class="clean-block clean-form">
+    <div class="container">
+      <div class="block-heading">
+        <h2 class="text-info"><%= table_name %>의 행 추가</h2>
+      </div>
+      <form method="post" action="<%= `/input/row/${table_name}` %>">
+        <% for (let column of columns) { %>
+          <% if (column !== 'id') { %>
+            <div class="form-group">
+              <label class="text-center"><%= column %></label>
+              <input class="form-control" type="text" name="<%= column %>" />
+            </div>
+          <% } %>
+        <% } %>
+        <div class="form-group">
+          <input
+            class="btn btn-primary btn-block"
+            type="submit"
+            value="생성하기"
+          />
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
