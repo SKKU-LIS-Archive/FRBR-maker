@@ -1,0 +1,75 @@
+<% include ../nav.ejs %>
+<main class="page">
+  <section class="clean-block about-us">
+    <div class="container">
+      <div class="block-heading">
+        <h3 class="text-info"><%= table_name %></h3>
+      </div>
+      <div class="row clearfix">
+        <div class="col-md-12">
+          <table
+            class="table table-bordered table-hover dynamic-table-tab_logic"
+          >
+            <thead>
+              <tr>
+                <% for (let column in rows[0]) { %>
+                  <th class="text-center">
+                    <%= column %>
+                    <div>
+                      <a
+                        href="<%= `/edit/column/${table_name}/${column}` %>"
+                        class="text-primary"
+                        >수정</a
+                      >
+                      /
+                      <a
+                        href="<%= `/delete/column/${table_name}/${column}` %>"
+                        class="text-danger"
+                        >삭제</a
+                      >
+                    </div>
+                  </th>
+                <% } %>
+                <th class="text-center">
+                  <a
+                    href="<%= `/input/column/${table_name}` %>"
+                    class="text-info"
+                    >열 추가</a
+                  >
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for (let row of rows) { %>
+              <tr class="dynamic-table-addr0">
+                <% for (let cell in row) { %>
+                  <td class="text-center" style="max-width: 400px;">
+                    <%= row[cell] %>
+                  </td>
+                <% } %>
+                <td class="text-center">
+                  <a
+                    class="btn btn-primary m-1"
+                    href="<%= `/edit/row/${table_name}/${row['id']}` %>"
+                    >수정</a
+                  >
+                  <a
+                    class="btn btn-danger m-1"
+                    href="<%= `/delete/row/${table_name}/${row['id']}` %>"
+                    >삭제</a
+                  >
+                </td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+          <a
+            class="btn btn-outline-info btn-block"
+            href="<%= `/input/row/${table_name}` %>"
+            >행 추가</a
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

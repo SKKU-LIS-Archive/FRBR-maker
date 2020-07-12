@@ -1,0 +1,42 @@
+<% include ../nav.ejs %>
+<main class="page">
+  <section class="clean-block about-us">
+      <div class="container">
+        <div class="block-heading">
+          <h3 class="text-info">테이블 목록</h3>
+        </div>
+        <div class="row clearfix">
+          <div class="col-md-12">
+            <table class="table table-bordered table-hover dynamic-table-tab_logic">
+              <thead>
+                <tr>
+                  <th class="text-center">
+                    테이블 이름
+                  </th>
+                  <th class="text-center">
+                    
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for (let table_item of tables) { %>
+                <tr class='dynamic-table-addr0'>
+                  <td class="text-center">
+                    <%= table_item %>
+                  </td>
+                  <td class="text-center">
+                    <a class="btn btn-success" href="<%= `/manage/table/${table_item}` %>">조회<a>
+                      <a class="btn btn-primary" href="<%= `/edit/table/${table_item}` %>">수정<a></a>
+                    <a class="btn btn-danger" href="<%= `/delete/table/${table_item}` %>">삭제<a>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+            <a class="btn btn-outline-info btn-block" href="/input/table">테이블 추가</a>
+          </div>
+        </div>
+      </div>
+    </div>    
+	</section>
+</main>
