@@ -1,0 +1,53 @@
+<% include ../nav.ejs %>
+<main class="page contact-us-page">
+  <section class="clean-block clean-form">
+    <div class="container">
+      <div class="block-heading">
+        <h2 class="text-info"><%= table_name %>의 열 수정</h2>
+      </div>
+      <form
+        method="post"
+        action="<%= `/edit/column/${table_name}/${column_name}` %>"
+      >
+        <div class="form-group">
+          <label class="text-center">열 이름</label>
+          <input
+            class="form-control"
+            type="text"
+            name="column_name"
+            value="<%= column_name %>"
+          />
+        </div>
+        <div class="form-group">
+          <label class="text-center">열 타입</label>
+          <select class="custom-select" name="column_type">
+            <option selected></option>
+            <option value="CHAR(10)">CHAR(10)</option>
+            <option value="VARCHAR(50)">VARCHAR(50)</option>
+            <option value="VARCHAR(250)">VARCHAR(250)</option>
+            <option value="TEXT">TEXT</option>
+            <option value="INT">INT</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="text-center">KEY</label>
+          <select class="custom-select" name="key_type">
+            <option selected>없음</option>
+            <option value="FOREIGN">FOREIGN</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="text-center">레퍼런스 테이블(FOREIGN KEY 일 경우)</label>
+          <input class="form-control" type="text" name="reference_table" placeholder="테이블 이름" />
+        </div>
+        <div class="form-group">
+          <input
+            class="btn btn-primary btn-block"
+            type="submit"
+            value="수정하기"
+          />
+        </div>
+      </form>
+    </div>
+  </section>
+</main>

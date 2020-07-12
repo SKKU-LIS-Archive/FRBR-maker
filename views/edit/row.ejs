@@ -1,0 +1,32 @@
+<% include ../nav.ejs %>
+<main class="page contact-us-page">
+  <section class="clean-block clean-form">
+    <div class="container">
+      <div class="block-heading">
+        <h2 class="text-info"><%= table_name %> 테이블 행 수정</h2>
+      </div>
+      <form method="post" action="<%= `/edit/row/${table_name}/${id}` %>">
+        <% for (let cell_name in row) { %>
+          <% if (cell_name !== 'id') { %>
+            <div class="form-group">
+              <label class="text-center"><%= cell_name %></label>
+              <input
+                class="form-control"
+                type="text"
+                name="<%= cell_name %>"
+                value="<%= row[cell_name] %>"
+              />
+            </div>
+          <% } %>
+        <% } %>
+        <div class="form-group">
+          <input
+            class="btn btn-primary btn-block"
+            type="submit"
+            value="수정하기"
+          />
+        </div>
+      </form>
+    </div>
+  </section>
+</main>

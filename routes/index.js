@@ -183,4 +183,149 @@ module.exports = function (app, conn) {
       }
     }
   });
+
+  /* ---------------------------------------------------------- EDIT */
+
+  // 테이블 수정 페이지
+  app.get('/edit/table/:table_name', function (req, res) {
+    let table_name = req.params.table_name;
+    res.render('index', {
+      page: 'edit/table',
+      table_name: table_name,
+    });
+  });
+
+  // 테이블 수정 작업
+  app.post('/edit/table/:table_name', function (req, res) {
+    let table_name = req.params.table_name;
+    let updated_table_name = req.body.table_name;
+    let update_table_sql = `
+      ALTER TABLE \`${table_name}\`
+      RENAME \`${updated_table_name}\`;
+    `;
+    conn.query(update_table_sql, function (err, results) {
+      if (err) {
+        console.log(err);
+        res.send(`<script>alert(\`${err.sqlMessage}\`)</script>`);
+      }
+      res.redirect('/manage/table_list');
+    });
+  });
+
+  // 테이블 행 수정 페이지
+  app.get('/edit/row/:table_name/:id', function (req, res) {
+    let table_name = req.params.table_name;
+    let id = req.params.id;
+    let row;
+    let get_row_sql = `
+      SELECT * FROM \`${table_name}\` WHERE id LIKE ${id};
+    `;
+    conn.query(get_row_sql, function (err, results) {
+      if (err) {
+        console.log(err);
+        res.send(`<script>alert(\`${err.sqlMessage}\`)</script>`);
+      } else {
+        row = results[0];
+        delete row.id;
+        res.render('index', {
+          page: 'edit/row',
+          table_name: table_name,
+          id: id,
+          row: row,
+        });
+      }
+    });
+  });
+
+  // 테이블 행 수정 작업
+  app.post('/edit/row/:table_name/:id', function (req, res) {
+    let body = req.body;
+    let table_name = req.params.table_name;
+    let id = req.params.id;
+    let column_value_pairs = [];
+
+    // 주의 : 텍스트 내용에 '', "", `` 가 없도록 할 것.
+    for (let i in body) {
+      let column_value = `\`${i}\` = "${body[i]}"`;
+      column_value_pairs.push(column_value);
+    }
+    let update_row_sql = `
+      UPDATE \`${table_name}\`
+      SET ${column_value_pairs.join(',')}
+      WHERE id LIKE ${id};
+    `;
+    conn.query(update_row_sql, function (err, results) {
+      if (err) {
+        console.log(err);
+        res.send(`<script>alert(\`${err.sqlMessage}\`)</script>`);
+      } else {
+        res.redirect(`/manage/table/${table_name}`);
+      }
+    });
+  });
+
+  // 테이블 열 수정 페이지
+  app.get('/edit/column/:table_name/:column_name', function (req, res) {
+    let table_name = req.params.table_name;
+    let column_name = req.params.column_name;
+    res.render('index', {
+      page: 'edit/column',
+      table_name: table_name,
+      column_name: column_name,
+    });
+  });
+
+  // 테이블 열 수정 작업
+  app.post('/edit/column/:table_name/:column_name', function (req, res) {
+    let table_name = req.params.table_name;
+    let column_name = req.params.column_name;
+    let updated_column_name = req.body.column_name;
+    let updated_column_type = req.body.column_type;
+    let key_type = req.body.key_type;
+    let reference_table = req.body.reference_table;
+    let update_column_sql = `
+      ALTER TABLE \`${table_name}\` 
+      CHANGE \`${column_name}\` \`${updated_column_name}\` ${updated_column_type};
+    `;
+    let update_column_key_sql;
+
+    if (key_type === 'FOREIGN') {
+      conn.query(update_column_sql, function (err, results) {
+        if (err) {
+          console.log(err);
+          res.send(`<script>alert(\`${err.sqlMessage}\`)</script>`);
+        } else {
+          if (updated_column_type === 'INT') {
+            update_column_key_sql = `
+              ALTER TABLE \`${table_name}\`
+              ADD CONSTRAINT \`${updated_column_name}_FK\` FOREIGN KEY(\`${updated_column_name}\`) REFERENCES \`${reference_table}\`(id);
+            `;
+          } else {
+            return res.send('<script>alert("FOREIGN KEY 로 지정할 테이블은 INT 자료형이여야 합니다")</script>');
+          }
+          conn.query(update_column_key_sql, function (err2, results2) {
+            if (err2) {
+              console.log(err2);
+              res.send(`<script>alert(\`${err2.sqlMessage}\`)</script>`)
+            } else {
+              res.redirect(`/manage/table/${table_name}`);
+            }
+          })
+        }
+      });
+    } else {
+      if (updated_column_type === 'INT') {
+        return res.send('<script>alert("FOREIGN KEY 가 아닌 열은 문자 자료형을 가지도록 지정해주십시오")</script>');
+      } else {
+        conn.query(update_column_sql, function (err, results) {
+          if (err) {
+            console.log(err);
+            res.send(`<script>alert(\`${err.sqlMessage}\`)</script>`);
+          } else {
+            res.redirect(`/manage/table/${table_name}`);
+          }
+        });
+      }
+    }
+  });
 }
